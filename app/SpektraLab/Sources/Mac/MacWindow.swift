@@ -14,10 +14,14 @@ enum MacWindow {
     /// The owner, 2026-10-24: no "SpektraLab" at the top of the window, in either mode (bold white on the Light
     /// ground, it was all but unreadable). The title bar's title is hidden; the window keeps its name for the
     /// Window menu and Mission Control (`UIWindowScene.title` is not touched), and its buttons.
+    /// The title bar is a Mac window's: `UIWindowScene.titlebar` is Mac Catalyst 13+ only (Apple's
+    /// availability: not iOS), and an iPhone or iPad scene has none to hide.
     @MainActor static func hideTitle() {
+        #if targetEnvironment(macCatalyst)
         for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
             scene.titlebar?.titleVisibility = .hidden
         }
+        #endif
     }
 
     /// Every window of the app, as it appears and as the interface scale changes (`RootView`). From 2026-10-24

@@ -34,6 +34,13 @@ struct ImportSheet: View {
                     .hairlineBelow(leading: 64)
                 SourceRow(icon: .copyIn, title: L("Copy files in"), sub: L("SpektraLab keeps its own copy"),
                           trailing: working == "copy" ? L("Copying") : nil) { chooseFiles(.copy) }
+                #if !targetEnvironment(macCatalyst)
+                    // The iOS sheet's third way in (`IOSPhotoImport.swift`). `os(iOS)` is true
+                    // under Catalyst; this is the guard that keeps the Mac's two-row sheet as it
+                    // was. The hairline moves under Copy files in, where the new row begins.
+                    .hairlineBelow(leading: 64)
+                IOSPhotoImportRow(working: $working, failed: $failed)
+                #endif
             }
             .rowEnabled(working == nil)
             .padding(.horizontal, Theme.Metric.margin)
@@ -124,8 +131,9 @@ struct ImportSheet: View {
     }
 }
 
-/// One way in: its glyph on a dark tile, what it is, and what it does.
-private struct SourceRow: View {
+/// One way in: its glyph on a dark tile, what it is, and what it does. Internal, not private:
+/// the iOS sheet's Photos row (`Sources/iOS/IOSPhotoImport.swift`) is the same row view.
+struct SourceRow: View {
     let icon: SpkIcon
     let title: String
     let sub: String

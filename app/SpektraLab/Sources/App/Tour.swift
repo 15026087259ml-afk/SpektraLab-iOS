@@ -45,8 +45,11 @@ enum Tour {
             let page = CGSize(width: Theme.Metric.designWidth, height: Theme.Metric.designHeight)
             scene.sizeRestrictions?.minimumSize = page
             scene.sizeRestrictions?.maximumSize = page
+            // The title bar is a Mac window's (Mac Catalyst 13+; a device scene has none to hide).
+            #if targetEnvironment(macCatalyst)
             scene.titlebar?.titleVisibility = .hidden
             scene.titlebar?.toolbar = nil
+            #endif
         }
         try? await Task.sleep(nanoseconds: 1_200_000_000)
 
